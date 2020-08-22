@@ -27,6 +27,7 @@ class TweetThreadsFromSource(object):
 
       """
       pass
+
 class TweetThreadsFromArchive(TweetThreadsFromSource):
     def __init__(self, api,tweet_dic,mute_set,user_nm):
       self.api=api
@@ -97,6 +98,7 @@ class TweetThreadsFromArchive(TweetThreadsFromSource):
             return tweet_lis
             #serialize_tweets(tweet_lis)
         return tweet_lis
+
 class TweetThreadsFromSearch(TweetThreadsFromSource):
     def __init__(self, api,search_results,user_name):
       self.api=api
