@@ -1,4 +1,4 @@
-import tweepy,json
+import tweepy, json
 import random
 import os
 import sys
@@ -23,6 +23,7 @@ def get_auth_cred():
     auth.set_access_token("494384833-RftxP0lJJjJe3Q5fIu4OuiJEZUS9HPs7Zx0lV8Ga", "muClGZZgljeg1BPaCSbtJrm8uYKyuQ5EMqTmIrH4iBLel")
     api = tweepy.API(auth,wait_on_rate_limit=True)
     return api
+
 def get_muted_ids(muted_file):
     """ Reads the muted file and returns muted user ids as a set
     Parameters
@@ -40,6 +41,7 @@ def get_muted_ids(muted_file):
         id=muted_dic[index]["muting"]["accountId"]
         mute_set[id]=1
     return mute_set
+
 def get_tweets_from_muted(mute_set,tweet_dict,limit):
     """ Reads the muted set and archive tweets and returns tweets from NON muted users
     Parameters
@@ -68,6 +70,7 @@ def get_tweets_from_muted(mute_set,tweet_dict,limit):
             new_tweet_list.append(tweet_dict[index])
             counter =counter+1
     return new_tweet_list
+
 def get_tweets_from_un_muted(mute_set,tweet_dict,limit):
     """ Reads the muted set and archive tweets and returns tweets from NON muted users
     Parameters
@@ -95,9 +98,6 @@ def get_tweets_from_un_muted(mute_set,tweet_dict,limit):
             new_tweet_list.append(tweet_dict[index])
             counter =counter+1
     return new_tweet_list
-
-
-
 
 def serialize_tweets(tweet_lis):
     #tweet_lis = sorted(tweet_lis, key = len)
@@ -168,7 +168,6 @@ def get_tweets_from_muted_and_unmuted(tweet_file_name,muted_file_name):
     except Exception as e:
         pass
     for i in range(len(muted_dic)):
-
         muted[muted_dic[i]["muting"]["accountId"]]=1
     tweet_dic=return_dict(tweet_file_name)
     tweet_lis=[]
@@ -184,6 +183,7 @@ def get_tweets_from_muted_and_unmuted(tweet_file_name,muted_file_name):
     print("final twweet dic le",len(tweet_dic))
     print("muted len is ",len(t1))
     return tweet_dic,mute_set
+
 def process_status(currentid,user_nm,api):
     #user_nm="JessicaHuseman"
     unique_conversation_peeps=set()
