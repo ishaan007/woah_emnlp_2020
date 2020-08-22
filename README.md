@@ -8,8 +8,11 @@ In this repository, we have included core code components used to fetch tweet th
 
 ## Structure
 `driver.py`: Main driver script for scraping data
+
 `utils.py`: Helper functions used in driver.py
+
 `retrieve_tweet_text.py`: ?
+
 `ways_to_fetch_tweet_threads.py`: Classes for fetching tweet threads
 
 todo @Julia + @Ishaan: explain this better
