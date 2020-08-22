@@ -117,7 +117,7 @@ class TweetThreadsFromSearch(TweetThreadsFromSource):
             #print("*******************************************")
             current_id=dic["id_str"]
             #if(count==11):
-            stack=process_status(current_id,self.user_name,self.api)
+            stack=process_status(current_id, self.user_name, self.api)
             if(stack!=None):
                 ac_ct=ac_ct+1
                 stack.reverse()

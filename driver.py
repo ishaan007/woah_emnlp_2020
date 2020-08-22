@@ -1,10 +1,11 @@
 import sys
 import argparse
 from utils import blockPrint, enablePrint, get_auth_cred, get_tweets_from_muted_and_unmuted, serialize_tweets
-from ways_to_fetch_tweet_threads import TweetThreadsFromArchive,TweetThreadsFromSearch
+from ways_to_fetch_tweet_threads import TweetThreadsFromArchive, TweetThreadsFromSearch
 
 # Toggle console logging on/off <> True/False
 ENABLE_PRINT_LOGS = True
+
 if not ENABLE_PRINT_LOGS:
     blockPrint()
 else:
