@@ -48,4 +48,5 @@ todo: explain this better
 
 ## Contact information:
 Ishaan: ia2419@columbia.edu
+
 Julia: jzg2110@columbia.edu 
