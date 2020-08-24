@@ -13,7 +13,7 @@ def enablePrint():
 
 # Authorize Twitter API access
 # TODO: This should not be public information as it's my private access token...
-# In the future, we should ask for these as arguments.
+# We should ask for these as arguments from the user.
 def get_auth_cred():
     """
     Returns api object to make twitter search calls
@@ -40,15 +40,15 @@ def get_muted_ids(muted_file):
         set of muted user ids
     """
     mute_set = {}
-    muted_dic = return_dict(muted_file)
-    for index in range(len(muted_dic)):
-        id = muted_dic[index]["muting"]["accountId"]
+    muted_dict = return_dict(muted_file)
+    for index in range(len(muted_dict)):
+        id = muted_dict[index]["muting"]["accountId"]
         mute_set[id] = 1
     return mute_set
 
 def get_tweets_from_muted(mute_set, tweet_dict, limit):
     """
-    Reads the muted set and archive tweets and returns tweets from NON muted users
+    Reads the muted set and archive tweets and returns tweets from muted users
     Parameters
     ----------
     muted_set: set
@@ -71,14 +71,14 @@ def get_tweets_from_muted(mute_set, tweet_dict, limit):
         if counter >= limit:
             return new_tweet_list
         if "in_reply_to_user_id" in tweet_dict[index]["tweet"] and tweet_dict[index]["tweet"]["in_reply_to_user_id"] in mute_set:
-            print("actual hater", tweet_dict[index]["tweet"]["in_reply_to_user_id"])
+            print("Muted user found", tweet_dict[index]["tweet"]["in_reply_to_user_id"])
             new_tweet_list.append(tweet_dict[index])
             counter += 1
     return new_tweet_list
 
 def get_tweets_from_unmuted(mute_set, tweet_dict, limit):
     """
-    Reads the muted set and archive tweets and returns tweets from NON muted users
+    Reads the muted set and archive tweets and returns tweets from non-muted users
     Parameters
     ----------
     muted_set: set
@@ -105,14 +105,12 @@ def get_tweets_from_unmuted(mute_set, tweet_dict, limit):
             counter += 1
     return new_tweet_list
 
-def serialize_tweets(tweet_lis):
-    #tweet_lis = sorted(tweet_lis, key = len)
-    #tweet_lis.reverse()
+def serialize_tweets(tweet_list):
     """
     Writes list of tweet threads as a json file
     Parameters
     ----------
-    tweet_lis: list
+    tweet_list: list
     list of tweet threads
 
     Return
@@ -121,9 +119,12 @@ def serialize_tweets(tweet_lis):
     writes json folder
     """
     random.seed(123)
-    random.shuffle(tweet_lis)
-    s = json.dumps(tweet_lis)
+    # Shuffle tweets
+    random.shuffle(tweet_list)
+    s = json.dumps(tweet_list)
     prev_path = os.path.normpath(os.getcwd() + os.sep + os.pardir)
+    # TODO: This doesn't actually work if the file does not already exist
+    # Have to create file
     fitered_file_name = os.path.join(prev_path, "dump", "filtered.json")
     open(fitered_file_name, "w").write(s)
 
@@ -140,8 +141,7 @@ def return_dict(json_file):
     jsonObj
     json object for the json file
     """
-    data_dict=None # TODO: Why is this variable needed?
-    jsonObj=None
+    jsonObj = None
     with open(json_file) as dataFile:
         data = dataFile.read()
         obj = '''[''' + data[data.find('{') : data.rfind('}') + 1] + ''']''' # TODO: What is this doing? Can you leave a comment
@@ -163,39 +163,52 @@ def get_tweets_from_muted_and_unmuted(tweet_file_name, muted_file_name):
 
     Return
     ----------
-    tweet_dic: list
+    tweet_dict: list
     list of tweets whose threads need to be fetched
 
     muted_set: set
     set of ids from muted users
     """
-    muted_dic = []
+    # TODO: Why do we need the below block of code?
+    muted_dict = []
     muted = {}
+    
     try:
-        muted_dic=return_dict(muted_file_name)
+        muted_dict = return_dict(muted_file_name)
     except Exception as e:
         print(e)
         pass
-    for i in range(len(muted_dic)):
-        muted[muted_dic[i]["muting"]["accountId"]] = 1 # TODO: Why do we set account ID to 1?
     
-    tweet_dic = return_dict(tweet_file_name)
-    tweet_lis = [] # TODO: Unused variable? Why?
-    limit = 4000 # TODO: User should be able to set the limit using provided args, this should not be hardcoded?
-    mute_set = get_muted_ids(muted_file_name)
-    # print("mute set is", mute_set)
-    t1 = get_tweets_from_muted(mute_set, tweet_dic, limit)
-    print("muted data fetch done")
-    limit = 400
-    t2 = get_tweets_from_unmuted(mute_set, tweet_dic, limit)
-    print("non muted data fetch done")
-    tweet_dic = t1 + t2
-    print("final tweet dict length", len(tweet_dic))
-    print("muted len is", len(t1))
-    return tweet_dic, mute_set
+    for i in range(len(muted_dict)):
+        muted[muted_dict[i]["muting"]["accountId"]] = 1 # TODO: Why do we set account ID to 1?
+    # TODO: Since we never use muted_dict and muted again afterwards??
 
-def process_status(currentid, username, api):
-    # username="JessicaHuseman"
+    tweet_dict = return_dict(tweet_file_name)    
+    mute_set = get_muted_ids(muted_file_name)
+    print("Set of muted users is:", mute_set)
+    
+    # Get tweets from muted
+    # TODO: User should be able to set the limit using provided args, this should not be hardcoded?    
+    limit = 4000
+    t1 = get_tweets_from_muted(mute_set, tweet_dict, limit)
+    print("Finished retrieving tweets with muted users")
+    print("Muted length is:", len(t1))
+    
+    # Get tweets from non-muted
+    limit = 400
+    t2 = get_tweets_from_unmuted(mute_set, tweet_dict, limit)
+    print("Finished retrieving tweets with non-muted users")
+    print("Non-muted length is:", len(t2))
+    
+    # Combine and return
+    tweet_dict = t1 + t2
+    print("Final tweet dict length:", len(tweet_dict))
+    
+    return tweet_dict, mute_set
+
+# TODO: Ishaan, can you document the purpose of this function
+def process_status(currentid, user_name, api):
+    # user_name="JessicaHuseman"
     unique_conversation_peeps = set()
     stack = []
     last_dic = None # TODO: unused variable? why?
@@ -214,7 +227,7 @@ def process_status(currentid, username, api):
             break
         unique_conversation_peeps.add(tweet.user.screen_name)
         dic = dict(tweet._json)
-        keys_list = list(dict(tweet._json).keys()) # TODO: unused variable??
+        keys_list = list(dict(tweet._json).keys()) # TODO: unused variable?
         currentid = dic["in_reply_to_status_id_str"]
         ttext = None
         try:
@@ -224,7 +237,7 @@ def process_status(currentid, username, api):
         # print(ttext)
         # print(dic)
         last_dic = dic
-        display_y = tweet.user.screen_name!=username
+        display_y = tweet.user.screen_name != user_name
         # TODO: This is kind of unwieldy... should create dict object, set attributes, and then insert that
         stack.insert(0, {"tweet":ttext,"retweet_count":dic["retweet_count"],"favorite_count":dic["favorite_count"],
                     "user_name":tweet.user.screen_name,"timestamp":str(tweet.created_at),"id":str(tweet.id),"display_tags":display_y})
