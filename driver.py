@@ -26,7 +26,7 @@ parser.add_argument("--mute_file",
                     required = True,
                     help = "mute.js file from downloaded Twitter archive")
 
-parser.add_argument("--username",
+parser.add_argument("--user_name",
                     default = None,
                     type = str,
                     required = True,
@@ -39,13 +39,13 @@ api = get_auth_cred()
 
 # Pull tweet threads from archive
 tweet_dic, mute_set = get_tweets_from_muted_and_unmuted(args.tweet_file, args.mute_file)
-tweet_threads_from_archive = TweetThreadsFromArchive(api, tweet_dic, mute_set, args.username)
+tweet_threads_from_archive = TweetThreadsFromArchive(api, tweet_dic, mute_set, args.user_name)
 tweet_threads_archive = tweet_threads_from_archive.get_tweet_threads_list()
 
 # Pull tweet threads from search results
-search_query = "from:" + args.username
+search_query = "from:" + args.user_name
 search_results = api.search(q = search_query, count = 100, tweet_mode = "extended")
-tweet_threads_from_search = TweetThreadsFromSearch(api, search_results, args.username)
+tweet_threads_from_search = TweetThreadsFromSearch(api, search_results, args.user_name)
 tweet_threads_search = tweet_threads_from_search.get_tweet_threads_list()
 
 # Pull together and save in json format
