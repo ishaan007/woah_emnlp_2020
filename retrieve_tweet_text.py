@@ -6,19 +6,16 @@ def return_dict(json_file):
     jsonObj = None
     with open(json_file) as dataFile:
         data = dataFile.read()
-        #obj = '''['''+data[data.find('{') : data.rfind('}')+1]+''']'''
         jsonObj = json.loads(data)
     dataFile.close()
     return jsonObj
 
-output_file = os.path.join('..', 'dump', 'filtered.json')
-# print("output file", output_file)
+output_file = os.path.join('dump', 'filtered.json')
 tweet_dict = return_dict(output_file)
 flatten_tweet_dict = {}
 
 for tweet_thread in tweet_dict:
     for tweet in tweet_thread:
-        #print("tweet", tweet)
         if str(tweet["id"]) in flatten_tweet_dict:
             print("already present for", flatten_tweet_dict[tweet["id"]])
         else:
