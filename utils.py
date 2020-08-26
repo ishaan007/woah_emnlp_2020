@@ -142,7 +142,7 @@ def return_dict(json_file):
     json object for the json file
     """
     jsonObj = None
-    with open(json_file) as dataFile:
+    with open(json_file, encoding="utf8") as dataFile:
         data = dataFile.read()
         obj = '''[''' + data[data.find('{') : data.rfind('}') + 1] + ''']''' # TODO: What is this doing? Can you leave a comment
         jsonObj = json.loads(obj)
@@ -208,7 +208,6 @@ def get_tweets_from_muted_and_unmuted(tweet_file_name, muted_file_name):
 
 # TODO: Ishaan, can you document the purpose of this function
 def process_status(currentid, user_name, api):
-    # user_name="JessicaHuseman"
     unique_conversation_peeps = set()
     stack = []
     last_dic = None # TODO: unused variable? why?
@@ -234,14 +233,11 @@ def process_status(currentid, user_name, api):
             ttext = tweet.retweeted_status.full_text
         except Exception as e:
             ttext = tweet.full_text
-        # print(ttext)
-        # print(dic)
         last_dic = dic
         display_y = tweet.user.screen_name != user_name
         # TODO: This is kind of unwieldy... should create dict object, set attributes, and then insert that
         stack.insert(0, {"tweet":ttext,"retweet_count":dic["retweet_count"],"favorite_count":dic["favorite_count"],
                     "user_name":tweet.user.screen_name,"timestamp":str(tweet.created_at),"id":str(tweet.id),"display_tags":display_y})
-        # stack.insert(0, ttext)
     if not is_used and len(stack) >= 2:
         if len(unique_conversation_peeps) >= 2:
             stack.reverse()

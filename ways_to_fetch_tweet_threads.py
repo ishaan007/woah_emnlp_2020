@@ -42,7 +42,6 @@ class TweetThreadsFromArchive(TweetThreadsFromSource):
                 dic = self.tweet_dict[index]["tweet"]
                 currentid = dic["id_str"]
                 stack = []
-                # print("len of tweet list is", len(tweet_list))
                 if index % 100 == 0:
                     print(index,"tweets visited")
                     print(len(tweet_list), "actual dump size")
@@ -59,7 +58,7 @@ class TweetThreadsFromArchive(TweetThreadsFromSource):
                         is_used = True
                         break
                     used[currentid] = 1
-                    # print(currentid)
+                    print(currentid)
 
                     tweet = None
                     try:
@@ -70,16 +69,11 @@ class TweetThreadsFromArchive(TweetThreadsFromSource):
                     unique_conversation_peeps.add(tweet.user.screen_name)
                     dic = dict(tweet._json)
                     keys_list = list(dict(tweet._json).keys()) # TODO: Unused variable
-                    # print("keys list", keys_list)
                     currentid = dic["in_reply_to_status_id_str"]
-                    # print("tweet text is", tweet.text)
-                    # print("dictionary looks like", dic)
                     ttext = None
                     try:
-                        # print("tweet full text is", tweet.retweeted_status.full_text)
                         ttext = tweet.retweeted_status.full_text
                     except Exception as e:
-                        #print("tweet full text is", tweet.full_text)
                         ttext = tweet.full_text
                     display_y = tweet.user.screen_name != self.user_name
 
@@ -96,7 +90,6 @@ class TweetThreadsFromArchive(TweetThreadsFromSource):
             pass
         finally:
             return tweet_list
-            #serialize_tweets(tweet_list)
         return tweet_list
 
 class TweetThreadsFromSearch(TweetThreadsFromSource):
@@ -112,12 +105,9 @@ class TweetThreadsFromSearch(TweetThreadsFromSource):
         tweet_list = []
         for tweet in self.search_results:
             dic = json.loads(json.dumps(tweet._json))
-            # print(count)
+            print(count)
             count = count + 1
-            # print(dic["full_text"])
-            # print("*******************************************")
             current_id = dic["id_str"]
-            # if count == 11:
             stack = process_status(current_id, self.user_name, self.api)
             if stack != None:
                 ac_ct = ac_ct + 1
