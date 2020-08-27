@@ -44,7 +44,8 @@ args = parser.parse_args()
 api = get_auth_cred()
 
 # Pull tweet threads from archive
-tweet_dict, mute_set, block_set = get_all_tweets(args.tweet_file, args.mute_file, args.block_file)
+# Specify number of tweets to pull from (in order) muted users, blocked users, and non-blocked/non-muted users.
+tweet_dict, mute_set, block_set = get_all_tweets(args.tweet_file, args.mute_file, args.block_file, 100, 100, 200)
 tweet_threads_from_archive = TweetThreadsFromArchive(api, tweet_dict, mute_set, block_set, args.user_name)
 tweet_threads_archive = tweet_threads_from_archive.get_tweet_threads_list()
 
