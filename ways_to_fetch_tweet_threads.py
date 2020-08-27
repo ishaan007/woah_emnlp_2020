@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-import tweepy,json
+import tweepy, json
 import random
 from utils import process_status
 
