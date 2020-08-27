@@ -22,6 +22,10 @@ In this repository, we have included core code components used to fetch tweet th
 
 `ways_to_fetch_tweet_threads.py`: Classes for fetching tweet threads (Archive, Search, ...)
 
+## Requirements
+- tweepy = 3.9.0
+  - See `requirements.txt` for dependencies.
+
 ## How to run code with Twitter archive data
 
 You can run `driver.py` using Twitter archive files in the following manner:
