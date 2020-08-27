@@ -1,34 +1,62 @@
 import sys
-from utils import blockPrint,enablePrint,get_auth_cred,get_tweets_from_muted_and_unmuted,serialize_tweets
-from ways_to_fetch_tweet_threads import TweetThreadsFromArchive,TweetThreadsFromSearch
+import argparse
+from utils import blockPrint, enablePrint, get_auth_cred, get_all_tweets, serialize_tweets
+from ways_to_fetch_tweet_threads import TweetThreadsFromArchive, TweetThreadsFromSearch
 
-#make it false to avoid seeing console logs
-ENABLE_PRINT_LOGS=True
+# Toggle console logging on/off <> True/False
+ENABLE_PRINT_LOGS = True
 
-if(not ENABLE_PRINT_LOGS):
+if not ENABLE_PRINT_LOGS:
     blockPrint()
 else:
     enablePrint()
 
-tweet_file_name=str(sys.argv[1])
-muted_file_name=str(sys.argv[2])
-user_nm=str(sys.argv[3])
-print(tweet_file_name," ",muted_file_name," ",user_nm)
+# Parse arguments
+parser = argparse.ArgumentParser()
 
-api=get_auth_cred()
-#tweet threads from archive
-tweet_dic,mute_set=get_tweets_from_muted_and_unmuted(tweet_file_name,muted_file_name)
-tweet_threads_from_archive=TweetThreadsFromArchive(api,tweet_dic,mute_set,user_nm)
-tweet_threads_archive=tweet_threads_from_archive.get_tweet_threads_list()
-#tweet_threads_archive=[]
+parser.add_argument("--tweet_file",
+                    default = None,
+                    type = str,
+                    required = True,
+                    help = "tweet.js file from downloaded Twitter archive")
 
+parser.add_argument("--mute_file",
+                    default = None,
+                    type = str,
+                    required = True,
+                    help = "mute.js file from downloaded Twitter archive")
 
-#tweet threds from search results
-search_query="from:"+user_nm
-search_results = api.search(q=search_query, count=100,tweet_mode="extended")
-tweet_threads_from_search=TweetThreadsFromSearch(api,search_results,user_nm)
-tweet_threads_search=tweet_threads_from_search.get_tweet_threads_list()
+parser.add_argument("--block_file",
+                    default = None,
+                    type = str,
+                    required = True,
+                    help = "block.js file from downloaded Twitter archive")
 
-all_tweet_threads=tweet_threads_archive+tweet_threads_search
+parser.add_argument("--user_name",
+                    default = None,
+                    type = str,
+                    required = True,
+                    help = "Twitter username associated with provided files")
 
+# TODO: Maybe we can add some optional arguments for # of tweets to fetch from each method!
+
+args = parser.parse_args()
+
+# Using Twitter API, fetch tweet threads
+api = get_auth_cred()
+
+# Pull tweet threads from archive
+# Specify number of tweets to pull from (in order) muted users, blocked users, and non-blocked/non-muted users.
+tweet_dict, mute_set, block_set = get_all_tweets(args.tweet_file, args.mute_file, args.block_file, 100, 100, 200)
+tweet_threads_from_archive = TweetThreadsFromArchive(api, tweet_dict, mute_set, block_set, args.user_name)
+tweet_threads_archive = tweet_threads_from_archive.get_tweet_threads_list()
+
+# Pull tweet threads from search results
+search_query = "from:" + args.user_name
+search_results = api.search(q = search_query, count = 100, tweet_mode = "extended")
+tweet_threads_from_search = TweetThreadsFromSearch(api, search_results, args.user_name)
+tweet_threads_search = tweet_threads_from_search.get_tweet_threads_list()
+
+# Pull together and save in json format
+all_tweet_threads = tweet_threads_archive + tweet_threads_search
 serialize_tweets(all_tweet_threads)
