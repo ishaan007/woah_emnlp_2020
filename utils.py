@@ -16,7 +16,7 @@ def enablePrint():
 # We should ask for these as arguments from the user.
 def get_auth_cred():
     """
-    Returns api object to make twitter search calls
+    Returns API object to make twitter search calls
     Return
     ----------
      api: twitter data structure
@@ -26,6 +26,28 @@ def get_auth_cred():
     auth.set_access_token("494384833-RftxP0lJJjJe3Q5fIu4OuiJEZUS9HPs7Zx0lV8Ga", "muClGZZgljeg1BPaCSbtJrm8uYKyuQ5EMqTmIrH4iBLel")
     api = tweepy.API(auth, wait_on_rate_limit = True)
     return api
+
+def return_dict(json_file): # TODO: These function annotations are super long, do we need them?
+    """
+    De-serializes json file to a json object 
+    Parameters
+    ----------
+    json_file: string
+    json file name
+
+    Return
+    ----------
+    json_obj
+    json object for the json file
+    """
+    json_obj = None
+    with open(json_file, encoding="utf8") as data_file:
+        data = data_file.read()
+        obj = '''[''' + data[data.find('{') : data.rfind('}') + 1] + ''']''' # TODO: What is this doing? Can you leave a comment
+        # TODO: Actually, do we even need the above line? See retrieve_tweet_text.py, it doesn't have it
+        json_obj = json.loads(obj)
+    data_file.close()
+    return json_obj
 
 def get_muted_ids(muted_file):
     """
@@ -39,19 +61,36 @@ def get_muted_ids(muted_file):
      mute_set: set
         set of muted user ids
     """
-    mute_set = {}
+    mute_set = set()
     muted_dict = return_dict(muted_file)
     for index in range(len(muted_dict)):
-        id = muted_dict[index]["muting"]["accountId"]
-        mute_set[id] = 1
+        mute_set.add(muted_dict[index]["muting"]["accountId"])
     return mute_set
+
+def get_blocked_ids(blocked_file):
+    """
+    Reads the blocked file and returns blocked user ids as a set
+    Parameters
+    ----------
+    blocked_file: string
+    full path to blocked.js file uploaded by the user
+    Return
+    ----------
+     block_set: set
+        set of blocked user ids
+    """
+    block_set = set()
+    blocked_dict = return_dict(blocked_file)
+    for index in range(len(blocked_dict)):
+        block_set.add(blocked_dict[index]["blocking"]["accountId"])
+    return block_set
 
 def get_tweets_from_muted(mute_set, tweet_dict, limit):
     """
     Reads the muted set and archive tweets and returns tweets from muted users
     Parameters
     ----------
-    muted_set: set
+    mute_set: set
     set of muted ids
 
     tweet_dict: dictionary
@@ -76,12 +115,45 @@ def get_tweets_from_muted(mute_set, tweet_dict, limit):
             counter += 1
     return new_tweet_list
 
-def get_tweets_from_unmuted(mute_set, tweet_dict, limit):
+def get_tweets_from_blocked(block_set, tweet_dict, limit):
     """
-    Reads the muted set and archive tweets and returns tweets from non-muted users
+    Reads the blocked set and archive tweets and returns tweets from blocked users
     Parameters
     ----------
-    muted_set: set
+    block_set: set
+    set of blocked ids
+
+    tweet_dict: dictionary
+    dictionary of all tweets from archive
+
+    limit: int
+    number of tweets to be considered, blocked tweets max out after a point
+
+    Return
+    ----------
+    new_tweet_list: list
+    list of tweets from blocked users
+    """
+    new_tweet_list = []
+    counter = 0
+    for index in range(len(tweet_dict)):
+        if counter >= limit:
+            return new_tweet_list
+        if "in_reply_to_user_id" in tweet_dict[index]["tweet"] and tweet_dict[index]["tweet"]["in_reply_to_user_id"] in block_set:
+            print("Blocked user found", tweet_dict[index]["tweet"]["in_reply_to_user_id"])
+            new_tweet_list.append(tweet_dict[index])
+            counter += 1
+    return new_tweet_list
+
+def get_tweets_from_unmuted_unblocked(mute_set, block_set, tweet_dict, limit):
+    """
+    Reads the muted and blocked sets and archive tweets and returns tweets from non-muted, non-blocked users
+    Parameters
+    ----------
+    mute_set: set
+    set of muted ids
+
+    block_set: set
     set of muted ids
 
     tweet_dict: dictionary
@@ -100,10 +172,70 @@ def get_tweets_from_unmuted(mute_set, tweet_dict, limit):
     for index in range(len(tweet_dict)):
         if counter >= limit:
             return new_tweet_list
-        if "in_reply_to_user_id" in tweet_dict[index]["tweet"] and tweet_dict[index]["tweet"]["in_reply_to_user_id"] not in mute_set:
+        if "in_reply_to_user_id" in tweet_dict[index]["tweet"] and tweet_dict[index]["tweet"]["in_reply_to_user_id"] not in (mute_set or block_set):
             new_tweet_list.append(tweet_dict[index])
             counter += 1
     return new_tweet_list
+
+def get_all_tweets(tweet_file_name, muted_file_name, blocked_file_name):
+    """
+    Reads the muted file, blocked file, and archive tweets file and returns final list of tweets 
+    whose threads need to be fetched
+    Parameters
+    ----------
+    tweet_file_name: string
+    name of tweet archive file
+
+    muted_file_name: string
+    name of muted file
+
+    blocked_file_name: string
+    name of blocked file
+
+    Return
+    ----------
+    tweet_dict: list
+    list of tweets whose threads need to be fetched
+
+    muted_set: set
+    set of ids from muted users
+
+    blocked_set: set
+    set of ids from blocked users
+    """
+
+    # Read tweet, block, mute.js files
+    tweet_dict = return_dict(tweet_file_name)    
+    mute_set = get_muted_ids(muted_file_name)
+    block_set = get_blocked_ids(blocked_file_name)
+    print("Set of muted users is:", mute_set)
+    print("Set of blocked users is:", block_set)
+    
+    # Get tweets from muted
+    # TODO: User should be able to set the limit using provided args, this should not be hardcoded?    
+    limit = 4000
+    t1 = get_tweets_from_muted(mute_set, tweet_dict, limit)
+    print("Finished retrieving tweets with muted users")
+    print("Muted length is:", len(t1))
+
+    # Get tweets from blocked
+    # TODO: User should be able to set the limit using provided args, this should not be hardcoded?    
+    limit = 4000
+    t2 = get_tweets_from_blocked(block_set, tweet_dict, limit)
+    print("Finished retrieving tweets with blocked users")
+    print("Blocked length is:", len(t2))
+    
+    # Get tweets from non-muted, non-blocked
+    limit = 400
+    t3 = get_tweets_from_unmuted_unblocked(mute_set, block_set, tweet_dict, limit)
+    print("Finished retrieving tweets with non-muted, non-blocked users")
+    print("Non-muted, non-blocked length is:", len(t3))
+    
+    # Combine and return
+    tweet_dict = t1 + t2 + t3
+    print("Final tweet dict length:", len(tweet_dict))
+    
+    return tweet_dict, mute_set, block_set
 
 def serialize_tweets(tweet_list):
     """
@@ -127,84 +259,6 @@ def serialize_tweets(tweet_list):
     # Have to create file
     fitered_file_name = os.path.join(prev_path, "dump", "filtered.json")
     open(fitered_file_name, "w").write(s)
-
-def return_dict(json_file):
-    """
-    De-serializes json file to a json object
-    Parameters
-    ----------
-    json file: string
-    json file name
-
-    Return
-    ----------
-    jsonObj
-    json object for the json file
-    """
-    jsonObj = None
-    with open(json_file, encoding="utf8") as dataFile:
-        data = dataFile.read()
-        obj = '''[''' + data[data.find('{') : data.rfind('}') + 1] + ''']''' # TODO: What is this doing? Can you leave a comment
-        jsonObj = json.loads(obj)
-    dataFile.close()
-    return jsonObj
-
-def get_tweets_from_muted_and_unmuted(tweet_file_name, muted_file_name):
-    """
-    Reads the muted file and archive tweets file and returns final list of tweets 
-    whose threads need to be fetched
-    Parameters
-    ----------
-    tweet_file_name: string
-    name of tweet archive file
-
-    muted_file_name: string
-    name of muted file
-
-    Return
-    ----------
-    tweet_dict: list
-    list of tweets whose threads need to be fetched
-
-    muted_set: set
-    set of ids from muted users
-    """
-    # TODO: Why do we need the below block of code?
-    muted_dict = []
-    muted = {}
-    
-    try:
-        muted_dict = return_dict(muted_file_name)
-    except Exception as e:
-        print(e)
-        pass
-    
-    for i in range(len(muted_dict)):
-        muted[muted_dict[i]["muting"]["accountId"]] = 1 # TODO: Why do we set account ID to 1?
-    # TODO: Since we never use muted_dict and muted again afterwards??
-
-    tweet_dict = return_dict(tweet_file_name)    
-    mute_set = get_muted_ids(muted_file_name)
-    print("Set of muted users is:", mute_set)
-    
-    # Get tweets from muted
-    # TODO: User should be able to set the limit using provided args, this should not be hardcoded?    
-    limit = 4000
-    t1 = get_tweets_from_muted(mute_set, tweet_dict, limit)
-    print("Finished retrieving tweets with muted users")
-    print("Muted length is:", len(t1))
-    
-    # Get tweets from non-muted
-    limit = 400
-    t2 = get_tweets_from_unmuted(mute_set, tweet_dict, limit)
-    print("Finished retrieving tweets with non-muted users")
-    print("Non-muted length is:", len(t2))
-    
-    # Combine and return
-    tweet_dict = t1 + t2
-    print("Final tweet dict length:", len(tweet_dict))
-    
-    return tweet_dict, mute_set
 
 # TODO: Ishaan, can you document the purpose of this function
 def process_status(currentid, user_name, api):

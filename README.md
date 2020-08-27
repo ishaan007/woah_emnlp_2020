@@ -1,41 +1,43 @@
 # Automatic Identification of Online Harassment of Women Journalists
-Research conducted by Columbia Speech Lab
-- Ishaan Arora (Columbia MS CS '20)
-- Julia Guo (Columbia BA CS '22)
+Research conducted by Columbia University Speech Lab
+
+Application development done by:
+- Ishaan Arora (MS '20, Columbia CS)
+- Julia Guo (BA '22, Columbia CS)
+
+Advised by:
+- Julia Hirschberg (Professor, Columbia CS)
+- Susan E. McGregor (Professor, Columbia Journalism & CS)
+- Sarah Ita Levitan (Postdoctorate, Columbia CS)
 
 ## Overview
 In this repository, we have included core code components used to fetch tweet threads potentially containing hate speech from Twitter archive data.
 
 ## Structure
-`driver.py`: Main driver script for scraping data
+`driver.py`: Main driver script for scraping data from Twitter archive and Twitter Search API
 
-`utils.py`: Helper functions used in driver.py
+`utils.py`: Helper Tweet retrieval functions used in `driver.py` and `ways_to_fetch_tweet_threads.py`
 
-`retrieve_tweet_text.py`: ?
+`retrieve_tweet_text.py`: todo @Ishaan: do we need this file?
 
-`ways_to_fetch_tweet_threads.py`: Classes for fetching tweet threads
+`ways_to_fetch_tweet_threads.py`: Classes for fetching tweet threads (Archive, Search, ...)
 
-todo @Julia + @Ishaan: explain this better
+## How to run code with Twitter archive data
 
-## How to run code with sample data
-We have provided some sample data for fetching tweet threads.
-
-You can run `driver.py` using this sample data (or any files you would like) in the following manner:
+You can run `driver.py` using Twitter archive files in the following manner:
 
 ```
-python driver.py <tweet file path> <mute file path> <twitter username>
+python driver.py --tweet_file=<tweet file path> --mute_file=<mute file path> --block_file=<block file path> --user_name=<twitter username>
 ```
 
-For example:
+For example (will need to remove this when making repo public):
 
 ```
-python driver.py sample_tweet.js sample_mute.js JohnDoe12345
+python driver.py --tweet_file=jh_tweet.js --mute_file=jh_mute.js --block_file=jh_block.js --user_name=JessicaHuseman
 ```
-
-todo @Julia + @Ishaan: generate some sample data? maybe?
 
 ## To add a new tweet filtering heuristic:
-Define a new subclass of TweetThreadsFromSource in ways_to_fetch_tweet_threads.py
+Define a new subclass of TweetThreadsFromSource in `ways_to_fetch_tweet_threads.py`
 
 Example:
 ```
@@ -47,6 +49,7 @@ Override the method `get_tweet_threads_list` in this newly defined class.
 todo: explain this better
 
 ## Contact information:
-Ishaan: ia2419@columbia.edu
-
-Julia: jzg2110@columbia.edu 
+```
+Ishaan Arora: ia2419@columbia.edu
+Julia Guo: jzg2110@columbia.edu
+```
