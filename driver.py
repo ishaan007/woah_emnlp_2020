@@ -38,6 +38,8 @@ parser.add_argument("--user_name",
                     required = True,
                     help = "Twitter username associated with provided files")
 
+# TODO: Maybe we can add some optional arguments for # of tweets to fetch from each method!
+
 args = parser.parse_args()
 
 # Using Twitter API, fetch tweet threads
