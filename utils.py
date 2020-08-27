@@ -177,7 +177,7 @@ def get_tweets_from_unmuted_unblocked(mute_set, block_set, tweet_dict, limit):
             counter += 1
     return new_tweet_list
 
-def get_all_tweets(tweet_file_name, muted_file_name, blocked_file_name):
+def get_all_tweets(tweet_file_name, muted_file_name, blocked_file_name, mute_len, block_len, other_len):
     """
     Reads the muted file, blocked file, and archive tweets file and returns final list of tweets 
     whose threads need to be fetched
@@ -192,15 +192,24 @@ def get_all_tweets(tweet_file_name, muted_file_name, blocked_file_name):
     blocked_file_name: string
     name of blocked file
 
+    mute_len: int
+    number of muted tweets to fetch
+
+    block_len: int
+    number of blocked tweets to fetch
+
+    other_len: int
+    number of non-muted, non-blocked tweets to fetch
+
     Return
     ----------
     tweet_dict: list
     list of tweets whose threads need to be fetched
 
-    muted_set: set
+    mute_set: set
     set of ids from muted users
 
-    blocked_set: set
+    block_set: set
     set of ids from blocked users
     """
 
@@ -211,22 +220,20 @@ def get_all_tweets(tweet_file_name, muted_file_name, blocked_file_name):
     print("Set of muted users is:", mute_set)
     print("Set of blocked users is:", block_set)
     
-    # Get tweets from muted
-    # TODO: User should be able to set the limit using provided args, this should not be hardcoded?    
-    limit = 4000
+    # Get tweets from muted   
+    limit = mute_len
     t1 = get_tweets_from_muted(mute_set, tweet_dict, limit)
     print("Finished retrieving tweets with muted users")
     print("Muted length is:", len(t1))
 
     # Get tweets from blocked
-    # TODO: User should be able to set the limit using provided args, this should not be hardcoded?    
-    limit = 4000
+    limit = block_len
     t2 = get_tweets_from_blocked(block_set, tweet_dict, limit)
     print("Finished retrieving tweets with blocked users")
     print("Blocked length is:", len(t2))
     
     # Get tweets from non-muted, non-blocked
-    limit = 400
+    limit = other_len
     t3 = get_tweets_from_unmuted_unblocked(mute_set, block_set, tweet_dict, limit)
     print("Finished retrieving tweets with non-muted, non-blocked users")
     print("Non-muted, non-blocked length is:", len(t3))
@@ -254,11 +261,11 @@ def serialize_tweets(tweet_list):
     # Shuffle tweets
     random.shuffle(tweet_list)
     s = json.dumps(tweet_list)
-    prev_path = os.path.normpath(os.getcwd() + os.sep + os.pardir)
-    # TODO: This doesn't actually work if the file does not already exist
-    # Have to create file
-    fitered_file_name = os.path.join(prev_path, "dump", "filtered.json")
-    open(fitered_file_name, "w").write(s)
+    if not os.path.exists('dump'):
+        os.makedirs('dump')
+    filtered_file_name = os.path.join('dump', 'filtered.json')
+    open(filtered_file_name, 'w+').write(s)
+    print('Final number of threads written:', len(tweet_list))
 
 # TODO: Ishaan, can you document the purpose of this function
 def process_status(currentid, user_name, api):
