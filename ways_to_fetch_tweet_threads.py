@@ -29,36 +29,33 @@ class TweetThreadsFromSource(object):
       pass
 
 class TweetThreadsFromArchive(TweetThreadsFromSource):
-    def __init__(self, api, tweet_dict, mute_set, user_name):
+    def __init__(self, api, tweet_dict, mute_set, block_set, user_name):
       self.api = api
       self.tweet_dict = tweet_dict
       self.mute_set = mute_set
+      self.block_set = block_set
       self.user_name = user_name
+    
     def get_tweet_threads_list(self):
         tweet_list = []
-        used = {}
+        used = set()
         try:
             for index in range(len(self.tweet_dict)):
                 dic = self.tweet_dict[index]["tweet"]
                 currentid = dic["id_str"]
+                print(currentid)
                 stack = []
                 if index % 100 == 0:
-                    print(index,"tweets visited")
+                    print(index, "tweets visited")
                     print(len(tweet_list), "actual dump size")
-                is_muted=False # TODO: Unused variable
-                is_used=False
-                if "in_reply_to_user_id" in dic and dic["in_reply_to_user_id"] in self.mute_set:
-                    is_muted=True
-                if dic["id"] in self.mute_set:
-                    is_muted=True
+                is_used = False
                 unique_conversation_peeps = set()
 
                 while currentid != None:
                     if currentid in used:
                         is_used = True
                         break
-                    used[currentid] = 1
-                    print(currentid)
+                    used.add(currentid)
 
                     tweet = None
                     try:
@@ -68,7 +65,6 @@ class TweetThreadsFromArchive(TweetThreadsFromSource):
                         break
                     unique_conversation_peeps.add(tweet.user.screen_name)
                     dic = dict(tweet._json)
-                    keys_list = list(dict(tweet._json).keys()) # TODO: Unused variable
                     currentid = dic["in_reply_to_status_id_str"]
                     ttext = None
                     try:
@@ -77,10 +73,9 @@ class TweetThreadsFromArchive(TweetThreadsFromSource):
                         ttext = tweet.full_text
                     display_y = tweet.user.screen_name != self.user_name
 
-                    # TODO: This is super unwieldy, can you rewrite by setting fields 1 by 1
+                    # TODO: This is super unwieldy, can you rewrite by setting fields 1 by 1 maybe?
                     stack.append({"tweet":ttext,"retweet_count":dic["retweet_count"],"favorite_count":dic["favorite_count"],
                     "user_name":tweet.user.screen_name,"timestamp":str(tweet.created_at),"id":str(tweet.id),"display_tags":display_y})
-                    is_muted = False
                 if not is_used and len(stack) > 2:
                     if len(unique_conversation_peeps) >= 2:
                         stack.reverse()

@@ -1,6 +1,6 @@
 import sys
 import argparse
-from utils import blockPrint, enablePrint, get_auth_cred, get_tweets_from_muted_and_unmuted, serialize_tweets
+from utils import blockPrint, enablePrint, get_auth_cred, get_all_tweets, serialize_tweets
 from ways_to_fetch_tweet_threads import TweetThreadsFromArchive, TweetThreadsFromSearch
 
 # Toggle console logging on/off <> True/False
@@ -26,6 +26,12 @@ parser.add_argument("--mute_file",
                     required = True,
                     help = "mute.js file from downloaded Twitter archive")
 
+parser.add_argument("--block_file",
+                    default = None,
+                    type = str,
+                    required = True,
+                    help = "block.js file from downloaded Twitter archive")
+
 parser.add_argument("--user_name",
                     default = None,
                     type = str,
@@ -38,8 +44,8 @@ args = parser.parse_args()
 api = get_auth_cred()
 
 # Pull tweet threads from archive
-tweet_dic, mute_set = get_tweets_from_muted_and_unmuted(args.tweet_file, args.mute_file)
-tweet_threads_from_archive = TweetThreadsFromArchive(api, tweet_dic, mute_set, args.user_name)
+tweet_dict, mute_set, block_set = get_all_tweets(args.tweet_file, args.mute_file, args.block_file)
+tweet_threads_from_archive = TweetThreadsFromArchive(api, tweet_dict, mute_set, block_set, args.user_name)
 tweet_threads_archive = tweet_threads_from_archive.get_tweet_threads_list()
 
 # Pull tweet threads from search results
