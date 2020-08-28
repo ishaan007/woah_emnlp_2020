@@ -18,9 +18,7 @@ In this repository, we have included core code components used to fetch tweet th
 
 `utils.py`: Helper Tweet retrieval functions used in `driver.py` and `ways_to_fetch_tweet_threads.py`
 
-`retrieve_tweet_text.py`: todo @Ishaan: do we need this file?
-
-`ways_to_fetch_tweet_threads.py`: Classes for fetching tweet threads (Archive, Search, ...)
+`ways_to_fetch_tweet_threads.py`: Classes for fetching tweet threads (from Archive, Search, ...)
 
 ## Requirements
 - tweepy = 3.9.0
@@ -29,6 +27,9 @@ In this repository, we have included core code components used to fetch tweet th
 ## How to run code with Twitter archive data
 
 You can run `driver.py` using Twitter archive files in the following manner:
+
+***Note: need to specify user API key***
+***Provide some documentation on how to get API key***
 
 ```
 python driver.py --tweet_file=<tweet file path> --mute_file=<mute file path> --block_file=<block file path> --user_name=<twitter username>
@@ -39,6 +40,8 @@ For example (will need to remove this when making repo public):
 ```
 python driver.py --tweet_file=jh_tweet.js --mute_file=jh_mute.js --block_file=jh_block.js --user_name=JessicaHuseman
 ```
+
+After the script finishes running, it will create a new data file, `dump/filtered.json`, containing tweet threads pulled from both the provided Twitter archive files, and the Search API.
 
 ## To add a new tweet filtering heuristic:
 Define a new subclass of TweetThreadsFromSource in `ways_to_fetch_tweet_threads.py`

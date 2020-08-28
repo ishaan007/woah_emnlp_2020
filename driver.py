@@ -38,7 +38,8 @@ parser.add_argument("--user_name",
                     required = True,
                     help = "Twitter username associated with provided files")
 
-# TODO: Maybe we can add some optional arguments for # of tweets to fetch from each method!
+# TODO: Maybe we can add some optional arguments for # of tweets to fetch from each method?
+# Ishaan, let me know what you think about hardcoding numbers vs. optional arguments
 
 args = parser.parse_args()
 

@@ -73,7 +73,7 @@ class TweetThreadsFromArchive(TweetThreadsFromSource):
                         ttext = tweet.full_text
                     display_y = tweet.user.screen_name != self.user_name
 
-                    # TODO: This is super unwieldy, can you rewrite by setting fields 1 by 1 maybe?
+                    # TODO: This is super unwieldy, can you rewrite by setting fields 1 by 1... maybe? whatever you think is best practice
                     stack.append({"tweet":ttext,"retweet_count":dic["retweet_count"],"favorite_count":dic["favorite_count"],
                     "user_name":tweet.user.screen_name,"timestamp":str(tweet.created_at),"id":str(tweet.id),"display_tags":display_y})
                 if not is_used and len(stack) > 2:
