@@ -73,7 +73,6 @@ class TweetThreadsFromArchive(TweetThreadsFromSource):
                         ttext = tweet.full_text
                     display_y = tweet.user.screen_name != self.user_name
 
-                    # TODO: This is super unwieldy, can you rewrite by setting fields 1 by 1... maybe? whatever you think is best practice
                     stack.append({"tweet":ttext,"retweet_count":dic["retweet_count"],"favorite_count":dic["favorite_count"],
                     "user_name":tweet.user.screen_name,"timestamp":str(tweet.created_at),"id":str(tweet.id),"display_tags":display_y})
                 if not is_used and len(stack) > 2:
@@ -93,9 +92,9 @@ class TweetThreadsFromSearch(TweetThreadsFromSource):
       self.search_results = search_results
       self.user_name = user_name
 
+    # Get tweet threads from search results
     def get_tweet_threads_list(self):
         count = 0
-        # TODO: Can you add some comments? Or make more descriptive var names?
         ac_ct = 0
         tweet_list = []
         for tweet in self.search_results:
@@ -103,6 +102,7 @@ class TweetThreadsFromSearch(TweetThreadsFromSource):
             print(count)
             count = count + 1
             current_id = dic["id_str"]
+            # Call method which pulls tweet thread from current tweet
             stack = process_status(current_id, self.user_name, self.api)
             if stack != None:
                 ac_ct = ac_ct + 1

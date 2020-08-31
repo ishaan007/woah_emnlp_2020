@@ -26,19 +26,20 @@ In this repository, we have included core code components used to fetch tweet th
 
 ## How to run code with Twitter archive data
 
+First, modify the function `get_auth_cred()` in `utils.py` with your appropriate Twitter Developer API keys.
+
 You can run `driver.py` using Twitter archive files in the following manner:
 
 ***Note: need to specify user API key***
 ***Provide some documentation on how to get API key***
 
 ```
-python driver.py --tweet_file=<tweet file path> --mute_file=<mute file path> --block_file=<block file path> --user_name=<twitter username>
+python driver.py --tweet_file=<tweet file path> --mute_file=<mute file path> --block_file=<block file path> --real_name=<real name> --user_name=<twitter username>
 ```
 
-For example (will need to remove this when making repo public):
-
+You can also provide optional arguments that specify the number of tweets to fetch using each method ([muted, blocked, non-muted/non-blocked, subtweets]; default [100, 100, 200, 100]) from the archive:
 ```
-python driver.py --tweet_file=jh_tweet.js --mute_file=jh_mute.js --block_file=jh_block.js --user_name=JessicaHuseman
+python driver.py --tweet_file=jh_tweet.js --mute_file=jh_mute.js --block_file=jh_block.js --real_name="Jessica Huseman" --user_name=JessicaHuseman --mute_tweets_ct=10 --block_tweets_ct=10 --other_tweets_ct=20 --subtweet_tweets_ct=10
 ```
 
 After the script finishes running, it will create a new data file, `dump/filtered.json`, containing tweet threads pulled from both the provided Twitter archive files, and the Search API.
@@ -52,8 +53,6 @@ class TweetThreadsFromSearch(TweetThreadsFromSource):
 ```
 
 Override the method `get_tweet_threads_list` in this newly defined class.
-
-todo: explain this better
 
 ## Contact information:
 ```
