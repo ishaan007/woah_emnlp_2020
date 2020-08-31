@@ -39,7 +39,7 @@ python driver.py --tweet_file=<tweet file path> --mute_file=<mute file path> --b
 
 You can also provide optional arguments that specify the number of tweets to fetch using each method ([muted, blocked, non-muted/non-blocked, subtweets]; default [100, 100, 200, 100]) from the archive:
 ```
-python driver.py --tweet_file=jh_tweet.js --mute_file=jh_mute.js --block_file=jh_block.js --real_name="Jessica Huseman" --user_name=JessicaHuseman --mute_tweets_ct=10 --block_tweets_ct=10 --other_tweets_ct=20 --subtweet_tweets_ct=10
+python driver.py ... --mute_tweets_ct=10 --block_tweets_ct=10 --other_tweets_ct=20 --subtweet_tweets_ct=10
 ```
 
 After the script finishes running, it will create a new data file, `dump/filtered.json`, containing tweet threads pulled from both the provided Twitter archive files, and the Search API.
