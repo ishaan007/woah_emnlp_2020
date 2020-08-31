@@ -40,9 +40,20 @@ After everything is set up and ready to go, you can run `driver.py` using Twitte
 python driver.py --tweet_file=<tweet file path> --mute_file=<mute file path> --block_file=<block file path> --real_name=<real name> --user_name=<twitter username>
 ```
 
-You can also provide optional arguments that specify the number of tweets to fetch using each method (muted, blocked, non-muted/non-blocked, subtweets). The default values are 100, 100, 200, 100, respectively:
+You can also provide optional arguments that specify the number of tweets to fetch using each method (muted, blocked, non-muted/non-blocked, subtweets). The default values are 100, 100, 200, 100, respectively.
+
+Here is an example command to run:
 ```
-python driver.py ...... --mute_tweets_ct=10 --block_tweets_ct=10 --other_tweets_ct=20 --subtweet_tweets_ct=10
+python driver.py \
+  --tweet_file="jd_tweet.js" \
+  --mute_file="jd_mute.js" \
+  --block_file="jd_block.js" \
+  --real_name="Jane Doe" \
+  --user_name="JaneDoe" \
+  --mute_tweets_ct=10 \
+  --block_tweets_ct=20 \
+  --other_tweets_ct=30 \
+  --subtweet_tweets_ct=40
 ```
 
 After the script finishes running, it will create a new data file, `dump/filtered.json`, containing tweet threads pulled from both the provided Twitter archive files, and the Search API.
