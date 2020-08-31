@@ -1,6 +1,6 @@
 import sys
 import argparse
-from utils import blockPrint, enablePrint, get_auth_cred, get_all_tweets, serialize_tweets
+from utils_v2 import blockPrint, enablePrint, get_auth_cred, get_all_tweets, serialize_tweets
 from ways_to_fetch_tweet_threads import TweetThreadsFromArchive, TweetThreadsFromSearch
 
 # Toggle console logging on/off <> True/False

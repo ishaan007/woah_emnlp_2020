@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 import tweepy, json
 import random
-from utils import process_status
+from utils_v2 import process_status
 
 class TweetThreadsFromSource(object):
     __metaclass__ = ABCMeta

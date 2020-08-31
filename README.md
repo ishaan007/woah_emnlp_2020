@@ -16,7 +16,7 @@ In this repository, we have included core code components used to fetch tweet th
 ## Structure
 `driver.py`: Main driver script for scraping data from Twitter archive and Twitter Search API
 
-`utils.py`: Helper Tweet retrieval functions used in `driver.py` and `ways_to_fetch_tweet_threads.py`
+`utils_v2.py`: Helper Tweet retrieval functions used in `driver.py` and `ways_to_fetch_tweet_threads.py`
 
 `ways_to_fetch_tweet_threads.py`: Classes for fetching tweet threads (from Archive, Search, ...)
 
@@ -26,7 +26,7 @@ In this repository, we have included core code components used to fetch tweet th
 
 ## How to run code with Twitter archive data
 
-First, modify the function `get_auth_cred()` in `utils.py` with your appropriate Twitter Developer API keys.
+First, modify the function `get_auth_cred()` in `utils_v2.py` with your appropriate Twitter Developer API keys.
 
 You can run `driver.py` using Twitter archive files in the following manner:
 
