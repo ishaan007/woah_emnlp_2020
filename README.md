@@ -1,4 +1,4 @@
-# Automatic Identification of Online Harassment of Women Journalists
+# A Novel Methodology for Developing Automatic Harassment Classifiers for Twitter
 Research conducted by Columbia University Speech Lab
 
 Application development done by:
