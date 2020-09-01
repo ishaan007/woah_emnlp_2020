@@ -30,7 +30,7 @@ In this repository, we have included core code components used to fetch tweet th
 ```
 conda create -n <env_name>
 conda activate <env_name>
-pip install -r requirements.text
+pip install -r requirements.txt
 ```
 
 ## How to run code with Twitter archive data
