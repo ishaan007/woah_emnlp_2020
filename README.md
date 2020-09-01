@@ -23,7 +23,7 @@ In this repository, we have included core code components used to fetch tweet th
 `ways_to_fetch_tweet_threads.py`: Classes for fetching tweet threads (from Archive, Search, ...)
 
 ## Requirements
-- tweepy==3.9.0
+- tweepy = 3.9.0
 
 ## Setting up environment
 ```
