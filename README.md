@@ -26,10 +26,19 @@ In this repository, we have included core code components used to fetch tweet th
 - tweepy = 3.9.0
   - See `requirements.txt` for dependencies.
 
+## Setting up environment
+```
+conda create -n <env_name>
+conda activate <env_name>
+pip install -r requirements.text
+```
+
 ## How to run code with Twitter archive data
 
+
+
 First, modify the function `get_auth_cred()` in `utils.py` with your appropriate Twitter Developer API keys. If you don't already have these, or are unfamiliar with the Twitter API, please see the below links.
-- [Twitter Developer API application](https://developer.twitter.com/en/apply-for-access) 
+- [Twitter Developer API application](https://developer.twitter.com/en/apply-for-access)
 - [Tweepy documentation](http://docs.tweepy.org/en/v3.5.0/auth_tutorial.html)
 
 Next, learn how to download your Twitter Archive [here](https://help.twitter.com/en/managing-your-account/how-to-download-your-twitter-archive).
