@@ -23,8 +23,7 @@ In this repository, we have included core code components used to fetch tweet th
 `ways_to_fetch_tweet_threads.py`: Classes for fetching tweet threads (from Archive, Search, ...)
 
 ## Requirements
-- tweepy = 3.9.0
-  - See `requirements.txt` for dependencies.
+- tweepy==3.9.0
 
 ## Setting up environment
 ```
@@ -34,8 +33,6 @@ pip install -r requirements.txt
 ```
 
 ## How to run code with Twitter archive data
-
-
 
 First, modify the function `get_auth_cred()` in `utils.py` with your appropriate Twitter Developer API keys. If you don't already have these, or are unfamiliar with the Twitter API, please see the below links.
 - [Twitter Developer API application](https://developer.twitter.com/en/apply-for-access)
