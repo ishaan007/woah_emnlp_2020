@@ -1,14 +1,16 @@
 # A Novel Methodology for Developing Automatic Harassment Classifiers for Twitter
 Research conducted by Columbia University Speech Lab
 
-Application development done by:
+Part of the [Fourth Workshop on Online Abuse and Harms](https://www.aclweb.org/anthology/volumes/2020.alw-1/) (co-hosted with EMNLP)
+
+Development done by:
 - Ishaan Arora (MS '20, Columbia CS)
 - Julia Guo (BA '22, Columbia CS)
 
 Advised by:
-- Julia Hirschberg (Professor, Columbia CS)
+- Sarah Ita Levitan (Professor, Hunter College; Previous postdoctorate, Columbia CS)
 - Susan E. McGregor (Professor, Columbia Journalism & CS)
-- Sarah Ita Levitan (Postdoctorate, Columbia CS)
+- Julia Hirschberg (Professor, Columbia CS)
 
 ## Overview
 In this repository, we have included core code components used to fetch tweet threads potentially containing hate speech from Twitter archive data. The primary heuristics currently used to fetch this data are:
